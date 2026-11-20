@@ -1,0 +1,42 @@
+{% extends "panel/base.html" %}
+{% block title %}Пользователи{% endblock %}
+{% block content %}
+<div class="sn-head"><div><h1>Пользователи</h1><p>Роли, статус и активность всех учётных записей</p></div></div>
+
+<form method="get" class="sn-panel">
+  <div class="sn-filter">
+    {% for field in form %}<div><label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+    <div class="sn-filter-actions">
+      <button type="submit" class="btn btn-primary">Найти</button>
+      <a class="btn btn-outline-secondary" href="{% url 'panel_users' %}">Сбросить</a>
+    </div>
+  </div>
+</form>
+
+<section class="sn-panel is-flush">
+  <div class="table-responsive">
+    <table class="table sn-table">
+      <thead>
+        <tr><th scope="col">Логин</th><th scope="col">E-mail</th><th scope="col">Роль</th><th scope="col">Статус</th><th scope="col" class="text-end">Проверок</th><th scope="col" class="text-end">Мошен.</th><th scope="col">Последняя проверка</th><th scope="col">Регистрация</th></tr>
+      </thead>
+      <tbody>
+        {% for item in page %}
+          <tr>
+            <td><a class="fw-semibold" href="{% url 'panel_user' item.pk %}">{{ item.username }}</a>{% if item.pk == user.pk %} <span class="sn-muted sn-small">(вы)</span>{% endif %}</td>
+            <td>{{ item.email|default:"—" }}</td>
+            <td><span class="sn-tag">{% if item.is_superuser %}главный админ{% elif item.is_staff %}администратор{% else %}пользователь{% endif %}</span></td>
+            <td>{% if item.is_active %}<span class="sn-tag is-safe"><svg class="sn-ico"><use href="#i-ok"/></svg>активен</span>{% else %}<span class="sn-tag is-fraud"><svg class="sn-ico"><use href="#i-stop"/></svg>заблокирован</span>{% endif %}</td>
+            <td class="text-end sn-num">{{ item.checks_total }}</td>
+            <td class="text-end sn-num">{{ item.fraud_total }}</td>
+            <td class="text-nowrap">{{ item.last_check|date:"d.m.Y H:i"|default:"—" }}</td>
+            <td class="text-nowrap">{{ item.date_joined|date:"d.m.Y" }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="8" class="sn-empty">Никого не найдено.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% include "panel/_pager.html" %}
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "panel/base.html" %}
+{% block title %}Журнал действий{% endblock %}
+{% block content %}
+<div class="sn-head"><div><h1>Журнал действий</h1><p>Кто, когда и что изменил в системе</p></div></div>
+
+<form method="get" class="sn-panel">
+  <div class="sn-filter">
+    {% for field in form %}<div><label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+    <div class="sn-filter-actions">
+      <button type="submit" class="btn btn-primary">Показать</button>
+      <a class="btn btn-outline-secondary" href="{% url 'panel_audit' %}">Сбросить</a>
+    </div>
+  </div>
+</form>
+
+<section class="sn-panel is-flush">
+  <div class="table-responsive">
+    <table class="table sn-table">
+      <thead><tr><th scope="col">Время</th><th scope="col">Кто</th><th scope="col">Действие</th><th scope="col">Объект</th><th scope="col">Подробности</th></tr></thead>
+      <tbody>
+        {% for item in page %}
+          <tr>
+            <td class="text-nowrap">{{ item.created_at|date:"d.m.Y H:i:s" }}</td>
+            <td>{{ item.actor.username|default:"система" }}</td>
+            <td>{{ item.get_action_display }}</td>
+            <td>{{ item.target }}</td>
+            <td class="sn-muted">{{ item.details }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="5" class="sn-empty">Записей пока нет.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% include "panel/_pager.html" %}
+{% endblock %}

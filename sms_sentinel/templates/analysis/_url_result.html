@@ -1,0 +1,43 @@
+{% with link=links.0 %}
+<article class="sn-verdict is-{{ check.tone }}" aria-label="Результат проверки ссылки">
+  <div class="sn-verdict-top">
+    <h2 class="sn-verdict-title"><svg class="sn-ico"><use href="#{{ check.icon }}"/></svg>{{ check.verdict_title }}</h2>
+    <span class="sn-verdict-level">Уровень риска: {{ check.get_risk_level_display|lower }}</span>
+  </div>
+
+  {% include "analysis/_gauge.html" with score=check.risk_score %}
+
+  <div class="sn-probs">
+    <div class="sn-prob"><span>P_url · опасность</span><strong>{{ link.p_url|floatformat:2 }}</strong></div>
+    <div class="sn-prob"><span>Сработало признаков</span><strong>{{ hit_count }}</strong></div>
+    <div class="sn-prob"><span>Домен</span><strong class="sn-mono" style="font-size:14px;overflow-wrap:anywhere">{{ link.domain }}</strong></div>
+  </div>
+
+  <div>
+    <h3 class="sn-section-title">Адрес · не кликабелен, не открывался</h3>
+    {% include "analysis/_url_line.html" %}
+  </div>
+
+  <div>
+    <h3 class="sn-section-title">Почему такой результат</h3>
+    <ul class="sn-list">
+      {% for reason in check.explanation %}
+        <li><span class="sn-bullet"><svg class="sn-ico"><use href="#{% if check.category == 'safe' %}i-check{% else %}i-bang{% endif %}"/></svg></span><span>{{ reason }}</span></li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="sn-advice">
+    <svg class="sn-ico"><use href="#i-shield"/></svg>
+    <div><strong>Что делать</strong><span>{{ check.recommendation }}</span></div>
+  </div>
+
+  <div class="sn-foot">
+    <span>{{ check.created_at|date:"d.m.Y H:i" }} · {{ check.versions|default:"модели: нет данных" }}<br>Оценка носит вероятностный характер и не гарантирует безопасность.</span>
+    <span class="sn-actions">
+      <a class="btn btn-sm btn-outline-secondary" href="{% url 'check_detail' check.pk %}">Подробнее</a>
+      <a class="btn btn-sm btn-outline-danger" href="{% url 'check_delete' check.pk %}"><svg class="sn-ico"><use href="#i-trash"/></svg>Удалить</a>
+    </span>
+  </div>
+</article>
+{% endwith %}

@@ -1,0 +1,17 @@
+{% with link=links.0 %}
+<section class="sn-panel">
+  <div class="sn-panel-head">
+    <h2 class="sn-panel-title">Признаки адреса</h2>
+    <span class="sn-muted sn-small">сработавшие выделены</span>
+  </div>
+  <ul class="sn-checks">
+    {% for row in link.checks %}
+      <li class="{% if row.hit %}is-hit{% endif %}">
+        <span class="sn-flag"><svg class="sn-ico"><use href="#{% if row.hit %}i-bang{% else %}i-check{% endif %}"/></svg></span>
+        <span class="sn-label">{{ row.label }}</span>
+        <span class="sn-value">{{ row.value }}</span>
+      </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endwith %}

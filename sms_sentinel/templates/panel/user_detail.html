@@ -1,0 +1,66 @@
+{% extends "panel/base.html" %}
+{% block title %}{{ target.username }}{% endblock %}
+{% block content %}
+<div class="sn-head">
+  <div><h1>Пользователь {{ target.username }}</h1><p>Карточка учётной записи и управление</p></div>
+  <div class="sn-head-actions"><a class="btn btn-outline-secondary" href="{% url 'panel_users' %}"><svg class="sn-ico"><use href="#i-back"/></svg>К списку</a></div>
+</div>
+
+<section class="sn-panel">
+  <dl class="sn-dl">
+    <div><dt>E-mail</dt><dd>{{ target.email|default:"не указан" }}</dd></div>
+    <div><dt>Роль</dt><dd>{% if target.is_superuser %}главный администратор{% elif target.is_staff %}администратор{% else %}пользователь{% endif %}</dd></div>
+    <div><dt>Статус</dt><dd>{% if target.is_active %}<span class="sn-tag is-safe"><svg class="sn-ico"><use href="#i-ok"/></svg>активен</span>{% else %}<span class="sn-tag is-fraud"><svg class="sn-ico"><use href="#i-stop"/></svg>заблокирован</span>{% endif %}</dd></div>
+    <div><dt>Хранение текстов SMS</dt><dd>{% if profile.store_sms_text %}разрешено{% else %}запрещено{% endif %}</dd></div>
+    <div><dt>Регистрация</dt><dd>{{ target.date_joined|date:"d.m.Y H:i" }}</dd></div>
+    <div><dt>Последний вход</dt><dd>{{ target.last_login|date:"d.m.Y H:i"|default:"не входил" }}</dd></div>
+    <div><dt>Язык интерфейса</dt><dd>{{ profile.get_preferred_language_display }}</dd></div>
+  </dl>
+</section>
+
+<div class="sn-grid sn-cols-4">
+  <div class="sn-stat"><span class="sn-stat-label">Всего проверок</span><span class="sn-stat-value sn-num">{{ checks_total }}</span><span class="sn-stat-note">SMS {{ sms_total }} · URL {{ url_total }}</span></div>
+  {% for item in by_category %}
+    <div class="sn-stat is-{{ item.tone }}"><span class="sn-stat-label">{{ item.label }}</span><span class="sn-stat-value sn-num">{{ item.value }}</span></div>
+  {% endfor %}
+</div>
+
+<section class="sn-panel">
+  <h2 class="sn-panel-title">Управление</h2>
+  {% if can_manage %}
+    <div class="sn-actions">
+      {% if target.is_active %}
+        <a class="btn btn-outline-danger" href="{% url 'panel_user_action' target.pk 'block' %}">Заблокировать</a>
+      {% else %}
+        <a class="btn btn-outline-primary" href="{% url 'panel_user_action' target.pk 'unblock' %}">Разблокировать</a>
+      {% endif %}
+      {% if target.is_staff %}
+        <a class="btn btn-outline-danger" href="{% url 'panel_user_action' target.pk 'revoke_admin' %}">Снять права администратора</a>
+      {% else %}
+        <a class="btn btn-outline-primary" href="{% url 'panel_user_action' target.pk 'grant_admin' %}">Сделать администратором</a>
+      {% endif %}
+      <a class="btn btn-outline-danger" href="{% url 'panel_user_action' target.pk 'clear_history' %}">Очистить историю</a>
+      <a class="btn btn-outline-secondary" href="{% url 'panel_checks' %}?user={{ target.username }}">Все проверки пользователя</a>
+    </div>
+  {% else %}
+    <p class="sn-muted sn-small mb-0">Свою учётную запись и учётную запись главного администратора здесь менять нельзя.</p>
+  {% endif %}
+</section>
+
+<section class="sn-panel is-flush">
+  <div class="sn-panel-pad">
+    <h2 class="sn-panel-title">Последние проверки</h2>
+    <p class="sn-muted sn-small mb-0 mt-1">Показаны только результаты. Текст сообщений и ссылок скрыт: это личные данные пользователя.</p>
+  </div>
+  {% include "panel/_checks_table.html" with rows=recent %}
+</section>
+
+<section class="sn-panel">
+  <h2 class="sn-panel-title">Действия администраторов с этой учётной записью</h2>
+  {% for item in actions %}
+    <div class="sn-small">{{ item.created_at|date:"d.m.Y H:i" }} · {{ item.actor.username|default:"система" }} · {{ item.get_action_display }}{% if item.details %} · {{ item.details }}{% endif %}</div>
+  {% empty %}
+    <p class="sn-muted sn-small mb-0">Действий пока не было.</p>
+  {% endfor %}
+</section>
+{% endblock %}

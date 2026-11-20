@@ -1,0 +1,14 @@
+<div class="sn-grid sn-cols-4">
+  <a class="sn-stat" href="{% url 'history' %}">
+    <span class="sn-stat-label">Всего проверок</span>
+    <span class="sn-stat-value sn-num">{{ total }}</span>
+    <span class="sn-stat-note">SMS {{ sms_total }} · URL {{ url_total }} · средний риск {{ average_score }}</span>
+  </a>
+  {% for item in categories %}
+    <a class="sn-stat is-{{ item.tone }}" href="{% url 'history' %}?category={{ item.code }}">
+      <span class="sn-stat-label">{{ item.label }}</span>
+      <span class="sn-stat-value sn-num">{{ item.value }}</span>
+      <span class="sn-stat-note">{{ item.share }}% от всех проверок</span>
+    </a>
+  {% endfor %}
+</div>

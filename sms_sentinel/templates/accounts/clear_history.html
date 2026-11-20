@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Удаление истории{% endblock %}
+{% block content %}
+<div class="sn-head"><div><h1>Удалить всю историю?</h1></div></div>
+<form method="post" class="sn-panel" style="max-width: 640px">
+  {% csrf_token %}
+  <p class="mb-0">Будет удалено записей: <strong class="sn-num">{{ checks_total }}</strong>. Восстановить их будет нельзя.</p>
+  <div class="sn-actions">
+    <button type="submit" class="btn btn-danger">Да, удалить всё</button>
+    <a class="btn btn-outline-secondary" href="{% url 'profile' %}">Отмена</a>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,10 @@
+<div class="d-flex flex-wrap gap-2 sn-small">
+  {% if "precision" in metrics %}<span class="sn-tag">Precision <strong>{{ metrics.precision|floatformat:3 }}</strong></span>{% endif %}
+  {% if "recall" in metrics %}<span class="sn-tag">Recall <strong>{{ metrics.recall|floatformat:3 }}</strong></span>{% endif %}
+  {% if "f1" in metrics %}<span class="sn-tag">F1 <strong>{{ metrics.f1|floatformat:3 }}</strong></span>{% endif %}
+  {% if "accuracy" in metrics %}<span class="sn-tag">Accuracy <strong>{{ metrics.accuracy|floatformat:3 }}</strong></span>{% endif %}
+  {% if "fn" in metrics %}<span class="sn-tag">Пропущено мошенничеств <strong>{{ metrics.fn }}</strong></span>{% endif %}
+  {% if "fp" in metrics %}<span class="sn-tag">Ложных тревог <strong>{{ metrics.fp }}</strong></span>{% endif %}
+  {% if "features" in metrics %}<span class="sn-tag">Признаков адреса <strong>{{ metrics.features }}</strong></span>{% endif %}
+  {% if not metrics %}<span class="sn-muted">Метрик пока нет.</span>{% endif %}
+</div>

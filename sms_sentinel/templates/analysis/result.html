@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Результат проверки{% endblock %}
+{% block content %}
+<div class="sn-head">
+  <div>
+    <h1>Результат проверки {% if check.check_type == 'sms' %}SMS{% else %}ссылки{% endif %}</h1>
+    <p>Запись № {{ check.pk }} · {{ check.created_at|date:"d.m.Y H:i" }}</p>
+  </div>
+  <div class="sn-head-actions">
+    <a class="btn btn-outline-secondary" href="{% url 'history' %}"><svg class="sn-ico"><use href="#i-back"/></svg>К истории</a>
+    <a class="btn btn-primary" href="{% if check.check_type == 'sms' %}{% url 'check_sms' %}{% else %}{% url 'check_url' %}{% endif %}">Новая проверка</a>
+  </div>
+</div>
+
+{% if check.check_type == 'sms' %}
+  <div style="max-width: 860px">{% include "analysis/_sms_result.html" %}</div>
+{% else %}
+  <div class="sn-workbench">
+    <div class="sn-stack">{% include "analysis/_url_result.html" %}</div>
+    <div class="sn-stack">{% include "analysis/_url_features.html" %}</div>
+  </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="sn-head">
+  <div>
+    <h1>Dashboard</h1>
+    <p>Ваши проверки за последние {{ period }} дней</p>
+  </div>
+  <div class="sn-head-actions">
+    <a class="btn btn-primary" href="{% url 'check_sms' %}"><svg class="sn-ico"><use href="#i-sms"/></svg>Проверить SMS</a>
+    <a class="btn btn-outline-secondary" href="{% url 'check_url' %}"><svg class="sn-ico"><use href="#i-link"/></svg>Проверить ссылку</a>
+  </div>
+</div>
+
+{% include "dashboard/_cards.html" %}
+
+<div class="sn-grid sn-cols-wide">
+  <section class="sn-panel">
+    <div class="sn-panel-head"><h2 class="sn-panel-title">Проверки по дням</h2><span class="sn-muted sn-small">за {{ period }} дней</span></div>
+    <div class="sn-chart is-tall" data-chart="daily-line"><canvas role="img" aria-label="Линейный график числа проверок по дням"></canvas><div class="sn-chart-empty">За этот период проверок нет</div></div>
+  </section>
+  <section class="sn-panel">
+    <h2 class="sn-panel-title">Распределение по категориям</h2>
+    <div class="sn-chart is-tall" data-chart="categories"><canvas role="img" aria-label="Распределение проверок по категориям"></canvas><div class="sn-chart-empty">Данных пока нет</div></div>
+  </section>
+</div>
+
+{% include "dashboard/_distribution.html" %}
+
+<section class="sn-panel is-flush">
+  <div class="sn-panel-pad sn-panel-head">
+    <h2 class="sn-panel-title">Последние проверки</h2>
+    <a class="sn-link" href="{% url 'history' %}">Вся история →</a>
+  </div>
+  {% include "analysis/_table.html" with rows=recent %}
+</section>
+
+{{ chart|json_script:"chart-data" }}
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'vendor/chartjs/chart.umd.min.js' %}"></script>
+<script src="{% static 'js/charts.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,4 @@
+<div class="sn-urlbox">
+  <span class="sn-url">{{ link.parts.before }}<span class="sn-host">{{ link.parts.host }}</span>{{ link.parts.after }}</span>
+  {% include "analysis/_tag.html" with item=link score=link.risk_score %}
+</div>

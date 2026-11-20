@@ -1,0 +1,35 @@
+# окружение и секреты
+.venv/
+venv/
+.env
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.ipynb_checkpoints/
+
+# Django
+db.sqlite3
+staticfiles/
+media/
+
+# логи
+logs/*
+!logs/.gitkeep
+
+# большие файлы данных (URL-наборы из задания 10 и т. п.)
+data/raw/*.zip
+data/raw/*.parquet
+data/raw/url_*
+data/processed/*.parquet
+*.tmp
+
+# IDE и ОС
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

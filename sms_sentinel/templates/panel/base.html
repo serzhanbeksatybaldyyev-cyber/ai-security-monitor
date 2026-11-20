@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block brand_home %}{% url 'panel_overview' %}{% endblock %}
+{% block brand_link %}{% url 'panel_overview' %}{% endblock %}
+{% block brand_sub %}панель администратора{% endblock %}
+{% block nav %}
+{% with route=request.resolver_match.url_name %}
+  <span class="sn-nav-label">Система</span>
+  <a href="{% url 'panel_overview' %}" class="{% if route == 'panel_overview' %}is-active{% endif %}"><svg class="sn-ico"><use href="#i-grid"/></svg>Обзор системы</a>
+  <a href="{% url 'panel_users' %}" class="{% if route == 'panel_users' or route == 'panel_user' or route == 'panel_user_action' %}is-active{% endif %}"><svg class="sn-ico"><use href="#i-users"/></svg>Пользователи</a>
+  <a href="{% url 'panel_checks' %}" class="{% if route == 'panel_checks' %}is-active{% endif %}"><svg class="sn-ico"><use href="#i-file"/></svg>Все проверки</a>
+  <a href="{% url 'panel_models' %}" class="{% if route == 'panel_models' %}is-active{% endif %}"><svg class="sn-ico"><use href="#i-cpu"/></svg>Модели и правила</a>
+  <a href="{% url 'panel_audit' %}" class="{% if route == 'panel_audit' %}is-active{% endif %}"><svg class="sn-ico"><use href="#i-journal"/></svg>Журнал действий</a>
+  {% if user.is_superuser %}<a href="{% url 'admin:index' %}"><svg class="sn-ico"><use href="#i-db"/></svg>База данных</a>{% endif %}
+  <span class="sn-nav-label">Режим</span>
+  <a href="{% url 'dashboard' %}"><svg class="sn-ico"><use href="#i-back"/></svg>Панель пользователя</a>
+{% endwith %}
+{% endblock %}

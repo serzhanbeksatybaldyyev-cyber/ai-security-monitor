@@ -1,0 +1,83 @@
+{% extends "panel/base.html" %}
+{% block title %}Модели и правила{% endblock %}
+{% block content %}
+<div class="sn-head">
+  <div><h1>Модели и правила</h1><p>Версии моделей, веса Risk Score и словари признаков</p></div>
+  <form method="post" action="{% url 'panel_models_sync' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-outline-primary">Обновить из файлов моделей</button>
+  </form>
+</div>
+
+<section class="sn-panel">
+  <h2 class="sn-panel-title">Версии моделей (таблица model_versions)</h2>
+  <div class="d-flex flex-column gap-3">
+    {% for model in versions %}
+      <div class="sn-panel" style="background: var(--soft); border-color: transparent">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <div><strong>{{ model.version }}</strong> <span class="sn-muted small">· {{ model.get_model_type_display }}</span></div>
+          {% if model.is_active %}
+            <span class="sn-tag is-safe">активна</span>
+          {% else %}
+            <form method="post" action="{% url 'panel_model_activate' model.pk %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-outline-primary">Сделать активной</button>
+            </form>
+          {% endif %}
+        </div>
+        <div class="small sn-muted mb-2 sn-wrap">{{ model.algorithm }}</div>
+        {% include "panel/_metrics.html" with metrics=model.metrics_json %}
+        <div class="small sn-muted mt-2">Порог {{ model.threshold }} · обучена {{ model.trained_at|date:"d.m.Y H:i"|default:"—" }} · использована в проверках: {{ model.used }}</div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <section class="sn-panel h-100">
+      <h2 class="sn-panel-title">Настройки Risk Score (risk_config.yaml)</h2>
+      <div class="table-responsive"><table class="table sn-table mb-2">
+        <thead><tr class="sn-muted"><th>Случай</th><th class="text-end">Текст</th><th class="text-end">Ссылка</th><th class="text-end">Словарь</th></tr></thead>
+        <tbody>
+          <tr><td>Надёжный язык, есть ссылка</td><td class="text-end">{{ config.weights.reliable.sms }}</td><td class="text-end">{{ config.weights.reliable.url }}</td><td class="text-end">{{ config.weights.reliable.rules }}</td></tr>
+          <tr><td>Другой язык, есть ссылка</td><td class="text-end">{{ config.weights.unreliable.sms }}</td><td class="text-end">{{ config.weights.unreliable.url }}</td><td class="text-end">{{ config.weights.unreliable.rules }}</td></tr>
+          <tr><td>Надёжный язык, без ссылки</td><td class="text-end">{{ config.weights.no_url.reliable.sms }}</td><td class="text-end">—</td><td class="text-end">{{ config.weights.no_url.reliable.rules }}</td></tr>
+          <tr><td>Другой язык, без ссылки</td><td class="text-end">{{ config.weights.no_url.unreliable.sms }}</td><td class="text-end">—</td><td class="text-end">{{ config.weights.no_url.unreliable.rules }}</td></tr>
+        </tbody>
+      </table></div>
+      <div class="small">Надёжные языки: <strong>{{ config.reliable_languages|join:", " }}</strong></div>
+      <div class="small">Порог «средний риск»: <strong>{{ config.thresholds.medium }}</strong>, «высокий риск»: <strong>{{ config.thresholds.high }}</strong></div>
+      <div class="small">Бонус за согласие текста и ссылки: <strong>{{ config.agreement_bonus }}</strong></div>
+      <div class="small sn-muted mt-2">Значения меняются в файле ml/risk_config.yaml, а не в коде.</div>
+    </section>
+  </div>
+  <div class="col-lg-6">
+    <section class="sn-panel h-100">
+      <h2 class="sn-panel-title">Словарь социальной инженерии</h2>
+      <div class="table-responsive"><table class="table sn-table mb-0">
+        <thead><tr class="sn-muted"><th>Код</th><th>Описание</th><th class="text-end">Выражений</th><th class="text-end">Сработал</th></tr></thead>
+        <tbody>
+          {% for rule in rules %}
+            <tr><td class="font-monospace">{{ rule.code }}</td><td>{{ rule.title }}</td><td class="text-end">{{ rule.patterns }}</td><td class="text-end">{{ rule.hits }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table></div>
+    </section>
+  </div>
+</div>
+
+<section class="sn-panel">
+  <h2 class="sn-panel-title">Правила проверки ссылок</h2>
+  <div class="table-responsive">
+    <table class="table sn-table mb-0">
+      <thead><tr class="sn-muted"><th>Признак</th><th>Что означает</th><th class="text-end">Вес</th></tr></thead>
+      <tbody>
+        {% for rule in url_rules %}
+          <tr><td>{{ rule.label }}</td><td>{{ rule.reason|capfirst }}</td><td class="text-end">{{ rule.weight }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

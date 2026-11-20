@@ -1,0 +1,23 @@
+<div class="table-responsive">
+  <table class="table sn-table">
+    <thead>
+      <tr><th scope="col">№</th><th scope="col">Дата</th><th scope="col">Пользователь</th><th scope="col">Тип</th><th scope="col">Язык</th><th scope="col">Уровень</th><th scope="col" class="text-end">Risk Score</th><th scope="col">Категория</th></tr>
+    </thead>
+    <tbody>
+      {% for check in rows %}
+        <tr>
+          <td class="sn-muted">{{ check.pk }}</td>
+          <td class="text-nowrap">{{ check.created_at|date:"d.m.Y H:i" }}</td>
+          <td><a href="{% url 'panel_user' check.user_id %}">{{ check.user.username }}</a></td>
+          <td><span class="sn-kind">{{ check.get_check_type_display }}</span></td>
+          <td>{{ check.language|default:"—" }}</td>
+          <td>{{ check.get_risk_level_display }}</td>
+          <td class="text-end"><span class="sn-score is-{{ check.tone }}">{{ check.risk_score }}</span></td>
+          <td>{% include "analysis/_tag.html" with item=check score=None %}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="8" class="sn-empty">Проверок нет.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

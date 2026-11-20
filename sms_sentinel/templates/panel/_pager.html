@@ -1,0 +1,14 @@
+<div class="sn-pager">
+  {% if page.paginator.num_pages > 1 %}
+    <span class="sn-muted sn-small">Показано {{ page.start_index }}–{{ page.end_index }} из {{ total }}</span>
+    <nav aria-label="Страницы">
+      <ul class="pagination mb-0 flex-wrap">
+        {% for number in page.paginator.page_range %}
+          <li class="page-item{% if number == page.number %} active{% endif %}"><a class="page-link" href="?{% if query %}{{ query }}&amp;{% endif %}page={{ number }}"{% if number == page.number %} aria-current="page"{% endif %}>{{ number }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+  {% else %}
+    <span class="sn-muted sn-small">Всего записей: {{ total }}</span>
+  {% endif %}
+</div>

@@ -1,0 +1,12 @@
+<div class="sn-gauge" style="--score: {{ score }}; --t1: {{ zone_mid }}; --t2: {{ zone_high }}">
+  <div class="sn-gauge-row">
+    <span class="sn-gauge-num">{{ score }}<small>/ 100</small></span>
+    <span class="sn-muted sn-small">Risk Score</span>
+  </div>
+  <div class="sn-gauge-track" role="img" aria-label="Risk Score {{ score }} из 100">
+    <span></span><span></span><span></span>
+    <div class="sn-gauge-fill"><i class="z1"></i><i class="z2"></i><i class="z3"></i></div>
+    <i class="sn-gauge-marker"></i>
+  </div>
+  <div class="sn-gauge-scale" aria-hidden="true"><span>0</span><span class="s1">{{ zone_mid }}</span><span class="s2">{{ zone_high }}</span><span>100</span></div>
+</div>

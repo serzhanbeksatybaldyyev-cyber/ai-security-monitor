@@ -1,0 +1,19 @@
+<div class="sn-grid sn-cols-2">
+  <section class="sn-panel">
+    <h2 class="sn-panel-title">Уровни риска</h2>
+    <div class="sn-chart is-short" data-chart="levels"><canvas role="img" aria-label="Число проверок по уровням риска"></canvas><div class="sn-chart-empty">Данных пока нет</div></div>
+    <ul class="sn-legend">
+      {% for item in levels %}<li><i style="background: var(--sn-{{ item.tone }})"></i>{{ item.label }}: <strong class="sn-num">{{ item.value }}</strong></li>{% endfor %}
+    </ul>
+  </section>
+  <section class="sn-panel">
+    <h2 class="sn-panel-title">Топ-5 признаков социальной инженерии</h2>
+    <div class="sn-bars">
+      {% for sign in top_signs %}
+        <div class="sn-bar-row"><span>{{ sign.label }}</span><span class="sn-bar-track"><i style="width: {{ sign.width }}%"></i></span><b>{{ sign.value }}</b></div>
+      {% empty %}
+        <p class="sn-muted mb-0">Признаки появятся после первых проверок SMS.</p>
+      {% endfor %}
+    </div>
+  </section>
+</div>

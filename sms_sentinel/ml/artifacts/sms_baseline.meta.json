@@ -1,0 +1,19 @@
+{
+  "model_type": "sms",
+  "version": "sms_baseline_v1",
+  "algorithm": "TF-IDF (слова 1–2, символы 3–5) + 7 признаков + LogisticRegression(class_weight=balanced)",
+  "threshold": 0.5,
+  "trained_at": "2026-11-07T04:47:41+00:00",
+  "train_size": 3595,
+  "val_size": 771,
+  "metrics": {
+    "accuracy": 0.987,
+    "precision": 0.956,
+    "recall": 0.9355,
+    "f1": 0.9457,
+    "tn": 674,
+    "fp": 4,
+    "fn": 6,
+    "tp": 87
+  }
+}

@@ -1,0 +1,14 @@
+{% extends "panel/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="sn-head"><div><h1>{{ title }}?</h1></div></div>
+<form method="post" class="sn-panel" style="max-width: 640px">
+  {% csrf_token %}
+  <div>Пользователь: <strong>{{ target.username }}</strong>{% if target.email %} ({{ target.email }}){% endif %}</div>
+  <p class="mb-0">{{ text }}</p>
+  <div class="sn-actions">
+    <button type="submit" class="btn btn-{{ style }}">{{ button }}</button>
+    <a class="btn btn-outline-secondary" href="{% url 'panel_user' target.pk %}">Отмена</a>
+  </div>
+</form>
+{% endblock %}

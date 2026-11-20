@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}История{% endblock %}
+{% block content %}
+<div class="sn-head">
+  <div>
+    <h1>История проверок</h1>
+    <p>Только ваши записи, новые сверху, по 20 на странице</p>
+  </div>
+  <div class="sn-head-actions">
+    <a class="btn btn-outline-secondary" href="{% url 'history_export' %}{% if query %}?{{ query }}{% endif %}"><svg class="sn-ico"><use href="#i-down"/></svg>Скачать CSV</a>
+  </div>
+</div>
+
+<form method="get" class="sn-panel" aria-label="Фильтры истории">
+  <div class="sn-filter">
+    <div><label class="form-label" for="{{ form.date_from.id_for_label }}">{{ form.date_from.label }}</label>{{ form.date_from }}</div>
+    <div><label class="form-label" for="{{ form.date_to.id_for_label }}">{{ form.date_to.label }}</label>{{ form.date_to }}</div>
+    <div><label class="form-label" for="{{ form.type.id_for_label }}">{{ form.type.label }}</label>{{ form.type }}</div>
+    <div><label class="form-label" for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>{{ form.category }}</div>
+    <div><label class="form-label" for="{{ form.level.id_for_label }}">{{ form.level.label }}</label>{{ form.level }}</div>
+    <div class="sn-filter-actions">
+      <button type="submit" class="btn btn-primary">Применить</button>
+      {% if filtered %}<a class="btn btn-outline-secondary" href="{% url 'history' %}">Сбросить</a>{% endif %}
+    </div>
+  </div>
+  {% for error in form.errors.values %}{% for message in error %}<div class="sn-error" role="alert">{{ message }}</div>{% endfor %}{% endfor %}
+</form>
+
+<section class="sn-panel is-flush">
+  {% include "analysis/_table.html" with rows=page empty_text="Проверок с такими условиями нет." %}
+</section>
+
+<div class="sn-pager">
+  <span class="sn-muted sn-small">{% if page.paginator.num_pages > 1 %}Показано {{ page.start_index }}–{{ page.end_index }} из {{ total }}{% else %}Всего записей: {{ total }}{% endif %}</span>
+  {% if page.paginator.num_pages > 1 %}
+    <nav aria-label="Страницы истории">
+      <ul class="pagination mb-0 flex-wrap">
+        {% for number in page.paginator.page_range %}
+          <li class="page-item{% if number == page.number %} active{% endif %}"><a class="page-link" href="?{% if query %}{{ query }}&amp;{% endif %}page={{ number }}"{% if number == page.number %} aria-current="page"{% endif %}>{{ number }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+  {% endif %}
+</div>
+{% endblock %}

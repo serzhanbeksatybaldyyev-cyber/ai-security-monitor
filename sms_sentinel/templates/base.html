@@ -1,0 +1,85 @@
+{% load static %}<!doctype html>
+<html lang="ru" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <title>{% block title %}Sentinel{% endblock %} · Sentinel</title>
+  <script>
+    (function () {
+      var theme = "dark";
+      try { theme = localStorage.getItem("sn-theme") || theme; } catch (e) {}
+      document.documentElement.setAttribute("data-bs-theme", theme);
+    })();
+  </script>
+  <link href="{% static 'vendor/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'css/sentinel.css' %}" rel="stylesheet">
+</head>
+<body>
+{% include "_icons.html" %}
+<a class="visually-hidden-focusable btn btn-primary position-absolute m-2" href="#content">К содержимому</a>
+{% if user.is_authenticated %}
+<div class="sn-shell" id="shell">
+  <header class="sn-topbar">
+    <a class="sn-brand" href="{% block brand_home %}{% url 'dashboard' %}{% endblock %}">
+      <span class="sn-brand-mark"><svg class="sn-ico"><use href="#i-shield"/></svg></span>Sentinel
+    </a>
+    <button type="button" class="sn-burger" data-nav-toggle aria-label="Открыть меню" aria-controls="side" aria-expanded="false"><svg class="sn-ico"><use href="#i-menu"/></svg></button>
+  </header>
+  <div class="sn-scrim" data-nav-toggle></div>
+
+  <aside class="sn-side" id="side">
+    <a class="sn-brand" href="{% block brand_link %}{% url 'dashboard' %}{% endblock %}">
+      <span class="sn-brand-mark"><svg class="sn-ico"><use href="#i-shield"/></svg></span>
+      <span>Sentinel<small>{% block brand_sub %}защита от смишинга{% endblock %}</small></span>
+    </a>
+    <nav class="sn-nav" aria-label="Разделы">
+      {% with route=request.resolver_match.url_name %}
+      {% block nav %}
+        <a href="{% url 'dashboard' %}" class="{% if route == 'dashboard' %}is-active{% endif %}"><svg class="sn-ico"><use href="#i-grid"/></svg>Dashboard</a>
+        <a href="{% url 'check_sms' %}" class="{% if route == 'check_sms' %}is-active{% endif %}"><svg class="sn-ico"><use href="#i-sms"/></svg>Проверка SMS</a>
+        <a href="{% url 'check_url' %}" class="{% if route == 'check_url' %}is-active{% endif %}"><svg class="sn-ico"><use href="#i-link"/></svg>Проверка URL</a>
+        <a href="{% url 'history' %}" class="{% if route == 'history' or route == 'check_detail' or route == 'check_delete' %}is-active{% endif %}"><svg class="sn-ico"><use href="#i-clock"/></svg>История</a>
+        <a href="{% url 'stats' %}" class="{% if route == 'stats' %}is-active{% endif %}"><svg class="sn-ico"><use href="#i-bars"/></svg>Статистика</a>
+        <a href="{% url 'profile' %}" class="{% if route == 'profile' or route == 'clear_history' %}is-active{% endif %}"><svg class="sn-ico"><use href="#i-user"/></svg>Профиль</a>
+        {% if user.is_staff %}
+          <span class="sn-nav-label">Администрирование</span>
+          <a href="{% url 'panel_overview' %}"><svg class="sn-ico"><use href="#i-shield"/></svg>Панель администратора</a>
+        {% endif %}
+      {% endblock %}
+      {% endwith %}
+    </nav>
+    <div class="sn-side-foot">
+      <div class="sn-me">
+        <span class="sn-me-avatar" aria-hidden="true">{{ user.username|first }}</span>
+        <span class="sn-me-name">{{ user.username }}<span class="sn-me-role">{% if user.is_staff %}администратор{% else %}пользователь{% endif %}</span></span>
+      </div>
+      <div class="sn-foot-row">
+        <button type="button" class="sn-ghost" data-theme-toggle aria-label="Переключить тему"><svg class="sn-ico"><use href="#i-sun"/></svg><span data-theme-label>Светлая</span></button>
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="sn-ghost w-100"><svg class="sn-ico"><use href="#i-logout"/></svg>Выйти</button>
+        </form>
+      </div>
+    </div>
+  </aside>
+
+  <main class="sn-main" id="content">
+    <div class="sn-page">
+      {% for message in messages %}
+        <div class="sn-alert {% if message.tags == 'success' %}is-ok{% elif message.tags == 'danger' or message.tags == 'error' %}is-bad{% else %}is-warn{% endif %}" role="status">
+          <svg class="sn-ico"><use href="{% if message.tags == 'success' %}#i-check{% else %}#i-warn{% endif %}"/></svg><span>{{ message }}</span>
+        </div>
+      {% endfor %}
+      {% block content %}{% endblock %}
+      <p class="sn-disclaimer"><svg class="sn-ico"><use href="#i-info"/></svg>Оценка носит вероятностный характер и не гарантирует безопасность.</p>
+    </div>
+  </main>
+</div>
+{% else %}
+  {% block auth %}{% endblock %}
+{% endif %}
+<script src="{% static 'js/shell.js' %}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

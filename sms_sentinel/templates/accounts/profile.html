@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Профиль{% endblock %}
+{% block content %}
+<div class="sn-head">
+  <div>
+    <h1>Профиль</h1>
+    <p>Данные учётной записи, согласие на хранение текстов и пароль</p>
+  </div>
+</div>
+
+<section class="sn-panel">
+  <dl class="sn-dl">
+    <div><dt>Логин</dt><dd>{{ user.username }}</dd></div>
+    <div><dt>E-mail</dt><dd>{{ user.email|default:"не указан" }}</dd></div>
+    <div><dt>Роль</dt><dd>{% if user.is_staff %}администратор{% else %}пользователь{% endif %}</dd></div>
+    <div><dt>Зарегистрирован</dt><dd>{{ user.date_joined|date:"d.m.Y" }}</dd></div>
+    <div><dt>Проверок за всё время</dt><dd class="sn-num">{{ checks_total }}</dd></div>
+  </dl>
+</section>
+
+<div class="sn-grid sn-cols-2">
+  <form method="post" class="sn-panel">
+    {% csrf_token %}
+    <input type="hidden" name="section" value="settings">
+    <h2 class="sn-panel-title">Хранение данных</h2>
+    <div class="sn-switch-row">
+      <div class="form-check form-switch">
+        {{ form.store_sms_text }}
+        <label class="form-check-label fw-semibold" for="{{ form.store_sms_text.id_for_label }}">{{ form.store_sms_text.label }}</label>
+      </div>
+    </div>
+    <p class="sn-muted sn-small mb-0">По умолчанию выключено. Без согласия полный текст не сохраняется: в истории остаётся версия, где телефоны, номера карт, суммы и коды заменены на ***. Настройка действует для новых проверок.</p>
+    <div>
+      <label class="form-label" for="{{ form.preferred_language.id_for_label }}">{{ form.preferred_language.label }}</label>
+      {{ form.preferred_language }}
+    </div>
+    <div><button type="submit" class="btn btn-primary">Сохранить</button></div>
+  </form>
+
+  <form method="post" class="sn-panel" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="section" value="password">
+    <h2 class="sn-panel-title">Смена пароля</h2>
+    {% for error in password_form.non_field_errors %}<div class="sn-alert is-bad" role="alert"><svg class="sn-ico"><use href="#i-stop"/></svg><span>{{ error }}</span></div>{% endfor %}
+    {% for field in password_form %}
+      <div>
+        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text and not field.errors %}<div class="form-text mt-1">{{ field.help_text }}</div>{% endif %}
+        {% for error in field.errors %}<div class="sn-error">{{ error }}</div>{% endfor %}
+      </div>
+    {% endfor %}
+    <div><button type="submit" class="btn btn-outline-primary">Изменить пароль</button></div>
+  </form>
+</div>
+
+<section class="sn-panel">
+  <div class="sn-panel-head">
+    <div>
+      <h2 class="sn-panel-title">Очистка истории</h2>
+      <span class="sn-muted sn-small">Удалит все ваши проверки вместе с найденными ссылками и признаками.</span>
+    </div>
+    <a class="btn btn-outline-danger{% if not checks_total %} disabled{% endif %}" href="{% url 'clear_history' %}"><svg class="sn-ico"><use href="#i-trash"/></svg>Удалить всю мою историю</a>
+  </div>
+</section>
+{% endblock %}

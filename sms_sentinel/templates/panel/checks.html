@@ -1,0 +1,26 @@
+{% extends "panel/base.html" %}
+{% block title %}Все проверки{% endblock %}
+{% block content %}
+<div class="sn-head">
+  <div>
+    <h1>Все проверки</h1>
+    <p>Результаты всех пользователей без текстов сообщений и ссылок</p>
+  </div>
+  <div class="sn-head-actions">
+    <a class="btn btn-outline-secondary" href="{% url 'panel_checks_export' %}{% if query %}?{{ query }}{% endif %}"><svg class="sn-ico"><use href="#i-down"/></svg>Скачать CSV</a>
+  </div>
+</div>
+
+<form method="get" class="sn-panel">
+  <div class="sn-filter">
+    {% for field in form %}<div><label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+    <div class="sn-filter-actions">
+      <button type="submit" class="btn btn-primary">Применить</button>
+      <a class="btn btn-outline-secondary" href="{% url 'panel_checks' %}">Сбросить</a>
+    </div>
+  </div>
+</form>
+
+<section class="sn-panel is-flush">{% include "panel/_checks_table.html" with rows=page %}</section>
+{% include "panel/_pager.html" %}
+{% endblock %}

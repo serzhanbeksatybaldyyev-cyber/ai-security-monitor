@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Удаление записи{% endblock %}
+{% block content %}
+<div class="sn-head"><div><h1>Удалить запись из истории?</h1></div></div>
+<form method="post" class="sn-panel" style="max-width: 640px">
+  {% csrf_token %}
+  <div>
+    <div class="sn-muted sn-small mb-2">{{ check.get_check_type_display }} · {{ check.created_at|date:"d.m.Y H:i" }} · {% include "analysis/_tag.html" with item=check score=None %}</div>
+    <div class="sn-quote">{{ check.short_text }}</div>
+  </div>
+  <p class="mb-0">Запись, найденные ссылки и сработавшие признаки будут удалены без возможности восстановления.</p>
+  <div class="sn-actions">
+    <button type="submit" class="btn btn-danger">Да, удалить</button>
+    <a class="btn btn-outline-secondary" href="{% url 'check_detail' check.pk %}">Отмена</a>
+  </div>
+</form>
+{% endblock %}

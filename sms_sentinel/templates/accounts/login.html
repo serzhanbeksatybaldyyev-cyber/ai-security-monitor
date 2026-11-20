@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Вход{% endblock %}
+{% block auth %}
+{% include "accounts/_auth_frame_open.html" %}
+    <form method="post" class="sn-auth-card" novalidate>
+      {% csrf_token %}
+      <h1>Вход в систему</h1>
+      <p class="lead">Проверяйте SMS и ссылки до того, как на них нажмёте.</p>
+      {% for message in messages %}
+        <div class="sn-alert {% if message.tags == 'success' %}is-ok{% else %}is-warn{% endif %}" role="status"><svg class="sn-ico"><use href="#i-info"/></svg><span>{{ message }}</span></div>
+      {% endfor %}
+      {% if form.non_field_errors %}
+        <div class="sn-alert is-bad" role="alert"><svg class="sn-ico"><use href="#i-stop"/></svg><div>{% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}</div></div>
+      {% endif %}
+      <div>
+        <label class="form-label" for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+        {{ form.username }}
+        {% for error in form.username.errors %}<div class="sn-error">{{ error }}</div>{% endfor %}
+      </div>
+      <div>
+        <label class="form-label" for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+        {{ form.password }}
+        {% for error in form.password.errors %}<div class="sn-error">{{ error }}</div>{% endfor %}
+      </div>
+      <input type="hidden" name="next" value="{{ next }}">
+      <button type="submit" class="btn btn-primary w-100">Войти</button>
+    </form>
+    <p class="sn-auth-alt">Нет учётной записи? <a href="{% url 'register' %}">Зарегистрироваться</a></p>
+{% include "accounts/_auth_frame_close.html" %}
+{% endblock %}

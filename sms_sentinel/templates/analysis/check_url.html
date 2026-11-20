@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Проверка URL{% endblock %}
+{% block content %}
+<div class="sn-head">
+  <div>
+    <h1>Проверка ссылки</h1>
+    <p>Адрес анализируется только как строка: ссылка не открывается и редиректы не выполняются</p>
+  </div>
+</div>
+
+<div class="sn-workbench">
+  <div class="sn-stack">
+    <form method="post" action="{% url 'check_url' %}" class="sn-panel" id="check-form" data-once data-kind="url" data-api="{% url 'api_check_url' %}" data-field="url" novalidate>
+      {% csrf_token %}
+      <label class="sn-panel-title" for="{{ form.url.id_for_label }}">Адрес ссылки</label>
+      <div>
+        {{ form.url }}
+        <div id="check-error" class="sn-error" role="alert"{% if not form.url.errors %} hidden{% endif %}>{% for error in form.url.errors %}{{ error }}{% endfor %}</div>
+      </div>
+      <div class="sn-field-foot"><span>http://, https:// или без схемы, до 2048 символов. Ссылка не открывается.</span></div>
+      <div class="sn-actions">
+        <button type="submit" class="btn btn-primary" id="check-submit"><svg class="sn-ico"><use href="#i-link"/></svg>Проверить ссылку</button>
+        <button type="button" class="btn btn-outline-secondary" data-clear="{{ form.url.id_for_label }}"><svg class="sn-ico"><use href="#i-eraser"/></svg>Очистить</button>
+      </div>
+    </form>
+
+    <section class="sn-panel">
+      <h2 class="sn-panel-title">Примеры ссылок</h2>
+      <div class="sn-samples">
+        {% for sample in samples %}
+          <a class="sn-sample is-{{ sample.tone }}" href="?sample={{ sample.text|urlencode }}" data-sample="{{ sample.text }}" title="{{ sample.text }}"><i></i>{{ sample.label }}</a>
+        {% endfor %}
+      </div>
+      <span class="sn-muted sn-small">Адреса искусственные и ведут на зарезервированные домены.</span>
+    </section>
+  </div>
+
+  <div class="sn-stack" id="result-zone" aria-live="polite">
+    {% if not check %}{% include "analysis/_idle.html" with icon="i-link" hint="Вставьте ссылку или выберите пример, затем нажмите «Проверить ссылку»." %}{% endif %}
+    <div class="sn-busy" id="result-busy" role="status" aria-live="polite"><span class="sn-spin"></span><span>Анализируем…</span></div>
+    <div id="result-box">{% if check %}{% include "analysis/_url_result.html" %}{% include "analysis/_url_features.html" %}{% endif %}</div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/checker.js' %}"></script>{% endblock %}

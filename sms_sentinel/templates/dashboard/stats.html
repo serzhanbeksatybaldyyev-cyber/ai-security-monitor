@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Статистика{% endblock %}
+{% block content %}
+<div class="sn-head">
+  <div>
+    <h1>Статистика</h1>
+    <p>Расширенная картина по вашим проверкам за выбранный период</p>
+  </div>
+  <nav class="sn-segment" aria-label="Период">
+    {% for value in periods %}<a class="{% if period == value %}is-on{% endif %}" href="?period={{ value }}"{% if period == value %} aria-current="true"{% endif %}>{{ value }} дней</a>{% endfor %}
+  </nav>
+</div>
+
+{% include "dashboard/_cards.html" %}
+
+<section class="sn-panel">
+  <div class="sn-panel-head"><h2 class="sn-panel-title">Проверки по дням и категориям</h2>
+    <ul class="sn-legend">{% for item in categories %}<li><i style="background: var(--sn-{{ item.tone }})"></i>{{ item.label }}</li>{% endfor %}</ul>
+  </div>
+  <div class="sn-chart is-tall" data-chart="daily-stack"><canvas role="img" aria-label="Столбчатая диаграмма проверок по дням с разбивкой по категориям"></canvas><div class="sn-chart-empty">За этот период проверок нет</div></div>
+</section>
+
+<div class="sn-grid sn-cols-2">
+  <section class="sn-panel">
+    <h2 class="sn-panel-title">Категории</h2>
+    <div class="sn-chart" data-chart="categories"><canvas role="img" aria-label="Распределение проверок по категориям"></canvas><div class="sn-chart-empty">Данных пока нет</div></div>
+    <ul class="sn-legend">
+      {% for item in categories %}<li><i style="background: var(--sn-{{ item.tone }})"></i>{{ item.label }}: <strong class="sn-num">{{ item.value }}</strong> ({{ item.share }}%)</li>{% endfor %}
+    </ul>
+  </section>
+  <section class="sn-panel">
+    <h2 class="sn-panel-title">Тип проверок</h2>
+    <div class="sn-bars">
+      <div class="sn-bar-row"><span>SMS</span><span class="sn-bar-track"><i style="width: {% if total %}{% widthratio sms_total total 100 %}{% else %}0{% endif %}%"></i></span><b>{{ sms_total }}</b></div>
+      <div class="sn-bar-row"><span>URL</span><span class="sn-bar-track"><i style="width: {% if total %}{% widthratio url_total total 100 %}{% else %}0{% endif %}%"></i></span><b>{{ url_total }}</b></div>
+    </div>
+    <dl class="sn-dl mt-2">
+      <div><dt>Средний Risk Score</dt><dd class="sn-num">{{ average_score }} из 100</dd></div>
+      <div><dt>Всего за период</dt><dd class="sn-num">{{ total }}</dd></div>
+    </dl>
+  </section>
+</div>
+
+{% include "dashboard/_distribution.html" %}
+
+{{ chart|json_script:"chart-data" }}
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'vendor/chartjs/chart.umd.min.js' %}"></script>
+<script src="{% static 'js/charts.js' %}"></script>
+{% endblock %}

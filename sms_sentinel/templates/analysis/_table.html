@@ -1,0 +1,20 @@
+<div class="table-responsive">
+  <table class="table sn-table">
+    <thead>
+      <tr><th scope="col">Дата</th><th scope="col">Тип</th><th scope="col">Фрагмент</th><th scope="col" class="text-end">Risk Score</th><th scope="col">Результат</th></tr>
+    </thead>
+    <tbody>
+      {% for check in rows %}
+        <tr data-href="{% url 'check_detail' check.pk %}">
+          <td class="text-nowrap sn-muted">{{ check.created_at|date:"d.m.Y H:i" }}</td>
+          <td><span class="sn-kind">{{ check.get_check_type_display }}</span></td>
+          <td class="sn-cell-clip{% if check.check_type == 'url' %} sn-mono{% endif %}"><a href="{% url 'check_detail' check.pk %}" class="text-decoration-none">{{ check.short_text }}</a></td>
+          <td class="text-end"><span class="sn-score is-{{ check.tone }}">{{ check.risk_score }}</span></td>
+          <td>{% include "analysis/_tag.html" with item=check score=None %}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5" class="sn-empty">{{ empty_text|default:"Проверок пока нет." }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

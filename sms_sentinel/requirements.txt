@@ -1,0 +1,20 @@
+# Требуется Python 3.12 или 3.13 (numpy 2.5 не поддерживает Python 3.11).
+Django==5.2.18
+djangorestframework==3.18.3
+python-dotenv==1.2.3
+PyYAML==6.0.3
+
+numpy==2.5.3
+pandas==3.0.5
+scipy==1.18.1
+scikit-learn==1.9.1
+joblib==1.6.0
+matplotlib==3.11.2
+seaborn==0.13.2
+
+notebook==7.6.4
+ipykernel==7.4.0
+
+pytest==9.1.1
+pytest-django==4.14.0
+coverage==7.17.0

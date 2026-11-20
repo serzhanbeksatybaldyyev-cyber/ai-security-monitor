@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Нет доступа{% endblock %}
+{% block content %}
+<section class="sn-panel" style="max-width:640px">
+  <h1 class="h4 fw-bold mb-0">Нет доступа</h1>
+  <p class="sn-muted mb-0">Этот раздел доступен только администратору. Если вам нужен доступ, обратитесь к администратору системы.</p>
+  <div><a class="btn btn-primary" href="{% url 'dashboard' %}">На Dashboard</a></div>
+</section>
+{% endblock %}

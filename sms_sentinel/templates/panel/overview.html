@@ -1,0 +1,102 @@
+{% extends "panel/base.html" %}
+{% load static %}
+{% block title %}Обзор системы{% endblock %}
+{% block content %}
+<div class="sn-head">
+  <div>
+    <h1>Обзор системы</h1>
+    <p>Все пользователи за {{ period }} дней. Тексты чужих SMS администратору не показываются.</p>
+  </div>
+  <nav class="sn-segment" aria-label="Период">
+    {% for value in periods %}<a class="{% if period == value %}is-on{% endif %}" href="?period={{ value }}">{{ value }} дней</a>{% endfor %}
+  </nav>
+</div>
+
+<div class="sn-grid sn-cols-4">
+  <a class="sn-stat" href="{% url 'panel_users' %}"><span class="sn-stat-label">Пользователи</span><span class="sn-stat-value sn-num">{{ users_total }}</span><span class="sn-stat-note">админов {{ admins_total }} · заблокировано {{ blocked_total }}</span></a>
+  <div class="sn-stat"><span class="sn-stat-label">Активны за период</span><span class="sn-stat-value sn-num">{{ active_users }}</span><span class="sn-stat-note">новых регистраций: {{ new_users }}</span></div>
+  <a class="sn-stat" href="{% url 'panel_checks' %}"><span class="sn-stat-label">Проверок за период</span><span class="sn-stat-value sn-num">{{ total }}</span><span class="sn-stat-note">SMS {{ sms_total }} · URL {{ url_total }}</span></a>
+  <div class="sn-stat"><span class="sn-stat-label">Средний Risk Score</span><span class="sn-stat-value sn-num">{{ average_score }}</span><span class="sn-stat-note">из 100</span></div>
+</div>
+
+<div class="sn-grid sn-cols-3">
+  {% for item in categories %}
+    <a class="sn-stat is-{{ item.tone }}" href="{% url 'panel_checks' %}?category={{ item.code }}">
+      <span class="sn-stat-label">{{ item.label }}</span><span class="sn-stat-value sn-num">{{ item.value }}</span><span class="sn-stat-note">{{ item.share }}% от всех</span>
+    </a>
+  {% endfor %}
+</div>
+
+<div class="sn-grid sn-cols-wide">
+  <section class="sn-panel">
+    <h2 class="sn-panel-title">Проверки по дням</h2>
+    <div class="sn-chart is-tall" data-chart="daily-line"><canvas role="img" aria-label="Линейный график проверок по дням"></canvas><div class="sn-chart-empty">За этот период проверок нет</div></div>
+  </section>
+  <section class="sn-panel">
+    <h2 class="sn-panel-title">Категории</h2>
+    <div class="sn-chart is-tall" data-chart="categories"><canvas role="img" aria-label="Распределение по категориям"></canvas><div class="sn-chart-empty">Данных пока нет</div></div>
+  </section>
+</div>
+
+{% include "dashboard/_distribution.html" %}
+
+<div class="sn-grid sn-cols-3">
+  <section class="sn-panel">
+    <h2 class="sn-panel-title">Языки SMS</h2>
+    <div class="sn-bars">
+      {% for item in languages %}<div class="sn-bar-row"><span>{{ item.label|capfirst }}</span><span class="sn-bar-track"><i style="width: {{ item.width }}%"></i></span><b>{{ item.value }}</b></div>{% endfor %}
+    </div>
+  </section>
+  <section class="sn-panel">
+    <h2 class="sn-panel-title">Самые активные</h2>
+    <table class="table sn-table">
+      <thead><tr><th scope="col">Логин</th><th scope="col" class="text-end">Проверок</th><th scope="col" class="text-end">Мошен.</th></tr></thead>
+      <tbody>
+        {% for item in top_users %}
+          <tr><td><a class="fw-semibold" href="{% url 'panel_user' item.pk %}">{{ item.username }}</a></td><td class="text-end">{{ item.n }}</td><td class="text-end">{{ item.fraud }}</td></tr>
+        {% empty %}
+          <tr><td colspan="3" class="sn-muted">Нет проверок за период.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  <section class="sn-panel">
+    <h2 class="sn-panel-title">Частые опасные домены</h2>
+    <table class="table sn-table">
+      <thead><tr><th scope="col">Домен</th><th scope="col" class="text-end">Раз</th><th scope="col" class="text-end">Риск</th></tr></thead>
+      <tbody>
+        {% for item in risky_domains %}
+          <tr><td class="sn-mono sn-wrap">{{ item.domain }}</td><td class="text-end">{{ item.n }}</td><td class="text-end fw-bold">{{ item.top }}</td></tr>
+        {% empty %}
+          <tr><td colspan="3" class="sn-muted">Опасных ссылок не найдено.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<section class="sn-panel">
+  <div class="sn-panel-head"><h2 class="sn-panel-title">Активные версии моделей</h2><a class="sn-link" href="{% url 'panel_models' %}">Все версии →</a></div>
+  <div class="sn-grid sn-cols-2">
+    {% for model in models %}
+      <div class="sn-panel is-quiet">
+        <div class="sn-panel-head"><strong>{{ model.version }}</strong><span class="sn-tag is-safe"><svg class="sn-ico"><use href="#i-ok"/></svg>активна</span></div>
+        <span class="sn-muted sn-small sn-wrap">{{ model.get_model_type_display }} · {{ model.algorithm }}</span>
+        {% include "panel/_metrics.html" with metrics=model.metrics_json %}
+        <span class="sn-muted sn-small">Порог {{ model.threshold }} · использована в проверках: {{ model.used }}</span>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="sn-panel is-flush">
+  <div class="sn-panel-pad sn-panel-head"><h2 class="sn-panel-title">Последние проверки в системе</h2><a class="sn-link" href="{% url 'panel_checks' %}">Все проверки →</a></div>
+  {% include "panel/_checks_table.html" with rows=recent %}
+</section>
+
+{{ chart|json_script:"chart-data" }}
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'vendor/chartjs/chart.umd.min.js' %}"></script>
+<script src="{% static 'js/charts.js' %}"></script>
+{% endblock %}

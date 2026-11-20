@@ -1,0 +1,165 @@
+{
+  "model_type": "sms",
+  "version": "sms_multilingual_v2",
+  "algorithm": "TF-IDF (слова 1–2, символы 3–5) + 7 признаков + LogisticRegression(class_weight=balanced), корпус en+ru+kk",
+  "threshold": 0.5,
+  "trained_at": "2026-11-14T04:26:03+00:00",
+  "train_size": 10836,
+  "val_size": 2170,
+  "metrics": {
+    "accuracy": 0.9829,
+    "precision": 0.9091,
+    "recall": 0.9772,
+    "f1": 0.9419,
+    "tn": 1833,
+    "fp": 30,
+    "fn": 7,
+    "tp": 300
+  },
+  "languages": [
+    "en",
+    "ru",
+    "kk"
+  ],
+  "corpus_size": 15411,
+  "by_language": {
+    "en_val": {
+      "accuracy": 0.987,
+      "precision": 0.9663,
+      "recall": 0.9247,
+      "f1": 0.9451,
+      "tn": 675,
+      "fp": 3,
+      "fn": 7,
+      "tp": 86,
+      "size": 771,
+      "spam": 93
+    },
+    "en_test": {
+      "accuracy": 0.9831,
+      "precision": 0.9651,
+      "recall": 0.8925,
+      "f1": 0.9274,
+      "tn": 675,
+      "fp": 3,
+      "fn": 10,
+      "tp": 83,
+      "size": 771,
+      "spam": 93
+    },
+    "ru_val": {
+      "accuracy": 0.9771,
+      "precision": 0.8699,
+      "recall": 1.0,
+      "f1": 0.9304,
+      "tn": 575,
+      "fp": 16,
+      "fn": 0,
+      "tp": 107,
+      "size": 698,
+      "spam": 107
+    },
+    "ru_test": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "tn": 740,
+      "fp": 0,
+      "fn": 0,
+      "tp": 75,
+      "size": 815,
+      "spam": 75
+    },
+    "kk_val": {
+      "accuracy": 0.9843,
+      "precision": 0.9068,
+      "recall": 1.0,
+      "f1": 0.9511,
+      "tn": 583,
+      "fp": 11,
+      "fn": 0,
+      "tp": 107,
+      "size": 701,
+      "spam": 107
+    },
+    "kk_test": {
+      "accuracy": 0.978,
+      "precision": 0.8163,
+      "recall": 1.0,
+      "f1": 0.8989,
+      "tn": 721,
+      "fp": 18,
+      "fn": 0,
+      "tp": 80,
+      "size": 819,
+      "spam": 80
+    }
+  },
+  "overall_test": {
+    "accuracy": 0.9871,
+    "precision": 0.9189,
+    "recall": 0.9597,
+    "f1": 0.9389,
+    "tn": 2136,
+    "fp": 21,
+    "fn": 10,
+    "tp": 238,
+    "size": 2405,
+    "spam": 248
+  },
+  "custom_handwritten": {
+    "multilingual": {
+      "ru": {
+        "accuracy": 0.8846,
+        "precision": 0.9762,
+        "recall": 0.7885,
+        "f1": 0.8723,
+        "tn": 51,
+        "fp": 1,
+        "fn": 11,
+        "tp": 41,
+        "size": 104,
+        "spam": 52
+      },
+      "kk": {
+        "accuracy": 0.8654,
+        "precision": 1.0,
+        "recall": 0.7308,
+        "f1": 0.8444,
+        "tn": 26,
+        "fp": 0,
+        "fn": 7,
+        "tp": 19,
+        "size": 52,
+        "spam": 26
+      }
+    },
+    "english_only_baseline": {
+      "ru": {
+        "accuracy": 0.7885,
+        "precision": 0.7344,
+        "recall": 0.9038,
+        "f1": 0.8103,
+        "tn": 35,
+        "fp": 17,
+        "fn": 5,
+        "tp": 47,
+        "size": 104,
+        "spam": 52
+      },
+      "kk": {
+        "accuracy": 0.7308,
+        "precision": 0.7,
+        "recall": 0.8077,
+        "f1": 0.75,
+        "tn": 17,
+        "fp": 9,
+        "fn": 5,
+        "tp": 21,
+        "size": 52,
+        "spam": 26
+      }
+    }
+  }
+}

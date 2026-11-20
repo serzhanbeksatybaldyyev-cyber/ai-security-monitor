@@ -1,0 +1,23 @@
+version: 1
+reliable_languages: [en, ru, kk]
+weights:
+  reliable:
+    sms: 0.6
+    url: 0.3
+    rules: 0.1
+  unreliable:
+    sms: 0.2
+    url: 0.45
+    rules: 0.35
+  no_url:
+    reliable:
+      sms: 0.85
+      rules: 0.15
+    unreliable:
+      sms: 0.35
+      rules: 0.65
+rules_saturation: 2
+agreement_bonus: 10
+thresholds:
+  medium: 35
+  high: 70
